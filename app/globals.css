@@ -1,0 +1,422 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * One theme, and it is dark. Warm walnut ground, bone type, one patina
+ * accent, rust only for "no figure" and warnings. No glow, no gradients,
+ * no shadows. Contrast was measured, not assumed; three tokens were lifted
+ * from the brief's values so text passes AA on every ground it sits on:
+ *   --bone-3  #958A7B -> #A39888   (4.20 -> 5.01 on --walnut-3)
+ *   --patina  #4F9E8A -> #58A893   (4.46 -> 5.03 on --walnut-3)
+ *   --rust    #B4553A -> #DB7B5F   (3.40 -> 5.54 on --walnut-2); #B4553A kept as --rust-d for strokes
+ */
+:root {
+  --walnut: #1b1613;
+  --walnut-2: #241d19;
+  --walnut-3: #33291f;
+  --pitch: #120e0c;
+  --bone: #f0e9de;
+  --bone-2: #c8beaf;
+  --bone-3: #a39888;
+  --patina: #58a893;
+  --patina-d: #35705f;
+  --patina-s: #1e2e2a;
+  --rust: #db7b5f;
+  --rust-d: #b4553a;
+  --plate: #ede7dc;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    background: var(--walnut);
+    -webkit-text-size-adjust: 100%;
+  }
+  html,
+  body {
+    overflow-x: clip;
+  }
+  body {
+    background: var(--walnut);
+    color: var(--bone-2);
+    font-family: var(--font-body), 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    font-variant-numeric: tabular-nums;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2 {
+    font-family: var(--font-display), Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    color: var(--bone);
+    letter-spacing: -0.005em;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+    line-height: 1.04;
+  }
+  h2 {
+    font-size: clamp(1.85rem, 3.4vw, 2.75rem);
+    line-height: 1.1;
+  }
+  h3 {
+    color: var(--bone);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--patina);
+    outline-offset: 3px;
+  }
+  q {
+    quotes: '\201C' '\201D';
+  }
+  table {
+    border-collapse: collapse;
+  }
+  ::selection {
+    background: var(--patina-s);
+    color: var(--bone);
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 768px) {
+    .wrap {
+      padding-inline: 32px;
+    }
+  }
+
+  .label {
+    font-family: var(--font-mono), Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone-3);
+  }
+  .label-lg {
+    font-size: 12px;
+  }
+  @media (max-width: 399px) {
+    .label {
+      letter-spacing: 0.06em;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .figure {
+    font-family: var(--font-mono), Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prose-body p + p {
+    margin-top: 1.1em;
+  }
+
+  /* Text links: a rule that grows under the text. */
+  .text-link {
+    position: relative;
+    color: var(--patina);
+    border-bottom: 1px solid var(--patina-d);
+  }
+  .text-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--patina);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 180ms ease;
+  }
+  .text-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Seller words. Always visibly marked as quotation. */
+  .seller {
+    color: var(--bone);
+    font-style: italic;
+  }
+
+  /* The drawer button: the label slides right and an edge shows along the left, like a drawer pulled open. */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--walnut-3);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--bone);
+    font-family: var(--font-mono), Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 26px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background-color 170ms ease, border-color 170ms ease;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--patina);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 170ms ease;
+  }
+  .btn > .btn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 170ms ease;
+  }
+  .btn:hover {
+    background: var(--walnut-2);
+  }
+  .btn:hover::before {
+    transform: scaleY(1);
+  }
+  .btn:hover > .btn-label {
+    transform: translateX(3px);
+  }
+  .btn:active {
+    background: var(--pitch);
+  }
+  .btn:active::before {
+    transform: scaleY(0);
+  }
+  .btn:active > .btn-label {
+    transform: translateX(0);
+  }
+  .btn-secondary {
+    color: var(--bone-2);
+  }
+  .btn-secondary::before {
+    background: var(--bone-3);
+  }
+  .btn-sm {
+    padding: 10px 16px;
+  }
+  .btn[aria-pressed='true'] {
+    border-color: var(--patina);
+    color: var(--bone);
+    background: var(--patina-s);
+  }
+  .btn[aria-pressed='true']::before {
+    transform: scaleY(1);
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    cursor: not-allowed;
+    color: var(--bone-3);
+    border-style: dashed;
+    background: transparent;
+  }
+  .btn:disabled::before {
+    transform: scaleY(0);
+  }
+  .btn:disabled > .btn-label {
+    transform: none;
+  }
+
+  /* Cards: the border turns patina on hover. Nothing moves. */
+  .card {
+    border: 1px solid var(--walnut-3);
+    background: var(--walnut-2);
+    border-radius: 6px;
+    transition: border-color 170ms ease;
+  }
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--patina);
+  }
+
+  .rule-thick {
+    border-top: 3px solid var(--walnut-3);
+  }
+
+  /* Tables: rows lift to walnut-2 on hover. */
+  .data-table {
+    width: 100%;
+    font-size: 15px;
+  }
+  .data-table th {
+    font-family: var(--font-mono), Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone-3);
+    text-align: left;
+    vertical-align: bottom;
+    padding: 12px 14px;
+    border-bottom: 2px solid var(--walnut-3);
+  }
+  .data-table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--walnut-3);
+    vertical-align: top;
+  }
+  .data-table tbody tr {
+    transition: background-color 150ms ease;
+  }
+  .data-table tbody tr:hover {
+    background: var(--walnut-2);
+  }
+  .on-walnut-2 .data-table tbody tr:hover {
+    background: var(--walnut-3);
+  }
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .not-stated {
+    color: var(--rust);
+    font-family: var(--font-mono), Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Native carousels: scroll-snap, no script. */
+  .snap-row {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    padding-bottom: 14px;
+    scrollbar-color: var(--walnut-3) transparent;
+  }
+  .snap-row > * {
+    scroll-snap-align: start;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: -60px;
+    z-index: 60;
+    background: var(--pitch);
+    color: var(--bone);
+    padding: 10px 14px;
+    border: 1px solid var(--patina);
+    border-radius: 5px;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+
+  .nav-item {
+    display: inline-block;
+    padding-block: 6px;
+    border-bottom: 2px solid transparent;
+    color: var(--bone-2);
+    transition: border-color 170ms ease, color 170ms ease;
+  }
+  .nav-item:hover {
+    color: var(--bone);
+    border-bottom-color: var(--walnut-3);
+  }
+  .nav-item[aria-current='page'] {
+    color: var(--bone);
+    border-bottom-color: var(--patina);
+  }
+
+  .mobile-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    overflow-y: auto;
+    background: var(--pitch);
+    border-top: 1px solid var(--walnut-3);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Product photos sit on a light plate so white-ground images do not float in the dark. */
+  .plate {
+    background: var(--plate);
+    border-radius: 4px;
+  }
+
+  /* Tilt Beam: settles once when it appears; both counts are already printed beside it. */
+  .beam-arm {
+    transform-box: view-box;
+    transform-origin: var(--pivot-x) var(--pivot-y);
+    transform: rotate(var(--tilt));
+    animation: beam-settle 260ms ease-out 1 both;
+  }
+
+  /* FAQ accordion: native details, the marker rotates. */
+  .faq summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq .faq-mark {
+    transition: transform 170ms ease;
+  }
+  .faq details[open] .faq-mark {
+    transform: rotate(45deg);
+  }
+}
+
+@keyframes beam-settle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(var(--tilt));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
