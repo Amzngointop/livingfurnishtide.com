@@ -57,7 +57,7 @@ for (const p of products) {
   asins.add(p.asin)
   if (!/^B0[A-Z0-9]{8}$/.test(p.asin)) failures.push(`${p.asin}: not an ASIN`)
   if (!/^https:\/\/m\.media-amazon\.com\/images\/I\/.+\.jpg$/.test(p.imageUrl ?? '')) failures.push(`${p.asin}: imageUrl missing or malformed`)
-  if (p.affiliateUrl !== `https://www.amazon.com/dp/${p.asin}?tag=YOURTAG-20`) failures.push(`${p.asin}: affiliateUrl is ${p.affiliateUrl}`)
+  if (!new RegExp(`^https://www\\.amazon\\.com/[^/?]+/dp/${p.asin}\\?.*[?&]tag=livingfurnish-20(&|$)`).test(p.affiliateUrl)) failures.push(`${p.asin}: affiliateUrl is ${p.affiliateUrl}`)
   if (p.pieceSlug !== PIECE[p.category]) failures.push(`${p.asin}: pieceSlug ${p.pieceSlug} for ${p.category}`)
   if (p.brand !== null && !p.name.startsWith(p.brand)) failures.push(`${p.asin}: brand "${p.brand}" is not the start of the title`)
   if (typeof p.statesAntiTip !== 'boolean') failures.push(`${p.asin}: statesAntiTip is not a boolean`)

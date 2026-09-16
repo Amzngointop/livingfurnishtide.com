@@ -194,7 +194,7 @@ else notes.push('CPSC linked exactly once, on /words/anti-tip')
 /* Tip-over band above the first product link on the home page, by DOM order. */
 const home = byRoute['/']
 const band = home.html.indexOf('data-section-layout="bordered-band"')
-const firstProduct = Math.min(...['amazon.com/dp/', '#listing-'].map((n) => home.html.indexOf(n)).filter((i) => i > -1))
+const firstProduct = Math.min(...['www.amazon.com/', '#listing-'].map((n) => home.html.indexOf(n)).filter((i) => i > -1))
 if (!(band > -1 && band < firstProduct)) failures.push('home: the tip-over band is not above the first product link')
 else notes.push('home: tip-over band sits above the first product link in DOM order')
 const bandText = stripTags(home.html.split('data-section-layout="bordered-band"')[1].split('</section>')[0])
@@ -274,11 +274,12 @@ for (const p of built) {
       if (/data-pagelink/.test(attrs) && reg.get(href) !== text) failures.push(`${p.route}: link ${href} reads "${text}", target title is "${reg.get(href)}"`)
     } else if (href.startsWith('#')) {
       if (!ids[p.route].has(href.slice(1))) failures.push(`${p.route}: in-page link to missing ${href}`)
-    } else if (/amazon\.com\/dp\//.test(href)) {
+    } else if (/www\.amazon\.com\/[^/?]+\/dp\//.test(href)) {
       affiliate += 1
       const rel = attrs.match(/rel="([^"]*)"/)?.[1] ?? ''
       if (rel !== 'nofollow sponsored noopener') failures.push(`${p.route}: Amazon link rel="${rel}"`)
-      if (!/^https:\/\/www\.amazon\.com\/dp\/B0[A-Z0-9]{8}\?tag=YOURTAG-20$/.test(href)) failures.push(`${p.route}: malformed affiliate link ${href}`)
+      if (!/^https:\/\/www\.amazon\.com\/[^/?]+\/dp\/B0[A-Z0-9]{8}\?.*[?&]tag=livingfurnish-20(&|$)/.test(href)) failures.push(`${p.route}: malformed affiliate link ${href}`)
+      if (!products.some((q) => q.affiliateUrl === href)) failures.push(`${p.route}: affiliate link not in the catalog ${href}`)
     }
   }
 }
@@ -293,7 +294,7 @@ notes.push(`nav ${NAV.join(' · ')}: every item has a page whose h1 is its title
 /* ---------- affiliate coverage, images, disclosures ---------- */
 const gearHtml = built.filter((p) => p.route.startsWith('/gear/')).map((p) => p.html).join('\n')
 for (const p of products) {
-  if (!gearHtml.includes(`href="https://www.amazon.com/dp/${p.asin}?tag=YOURTAG-20"`)) failures.push(`${p.asin}: no affiliate link on its gear page`)
+  if (!gearHtml.includes(`href="${p.affiliateUrl.replaceAll('&', '&amp;')}"`)) failures.push(`${p.asin}: no affiliate link on its gear page`)
   if (!gearHtml.includes(encodeURIComponent(p.imageUrl))) failures.push(`${p.asin}: image not rendered through next/image`)
 }
 for (const p of built) {
@@ -305,7 +306,7 @@ for (const p of built) {
       if (!/class="plate[ "]/.test(parent)) failures.push(`${p.route}: product image without its light plate`)
     }
   }
-  const hasAffiliate = /amazon\.com\/dp\//.test(p.html)
+  const hasAffiliate = /www\.amazon\.com\/[^/?]+\/dp\//.test(p.html)
   const disclosures = [...p.html.matchAll(/data-disclosure="(\w+)"/g)].map((d) => d[1])
   if (p.route.startsWith('/gear/') && disclosures.join(',') !== 'top,bottom') failures.push(`${p.route}: disclosures ${disclosures}`)
   if (p.route === '/' && disclosures.join(',') !== 'home') failures.push(`home: disclosures ${disclosures}`)
