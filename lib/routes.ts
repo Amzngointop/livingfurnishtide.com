@@ -25,6 +25,7 @@ export const STATIC_TITLES = {
   '/privacy': 'Privacy',
   '/terms': 'Terms',
   '/affiliate-disclosure': 'Affiliate Disclosure',
+  '/pinterest': 'Pinterest Inspiration',
 } as const
 
 export type StaticPath = keyof typeof STATIC_TITLES
