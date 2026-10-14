@@ -97,7 +97,7 @@ export function PinterestCard({
 
       {/* Direct Pinterest Button with data-auto */}
       <a
-        href="https://pin.it/1BJCIqIRx"
+        href="https://www.amazon.com/b?node=228013&tag=livingfurnish-pn-20"
         target="_blank"
         data-auto="true"
         rel="nofollow sponsored noopener"
